@@ -7,6 +7,8 @@ const names = ['meta', 'sources', 'waters', 'spots', 'reels', 'rods', 'builds', 
 async function load() {
   const d = {};
   for (const n of names) d[n] = JSON.parse(await readFile(new URL(`../data/${n}.json`, import.meta.url), 'utf8'));
+  // Данные меняются сами: убираем ещё не сохранённые картинки, чтобы тест не зависел от текущего состояния.
+  d.spots = d.spots.map((s) => ({ ...s, photos: (s.photos ?? []).filter((u) => u.startsWith('data/')) }));
   return d;
 }
 const html = (id, text, photo) => `<div class="tgme_widget_message_wrap" data-post="rr4pepper/${id}"><div class="tgme_widget_message_photo_wrap" style="background-image:url('${photo}')"></div><div class="tgme_widget_message_text">${text}</div><time datetime="2026-11-28T10:00:00+00:00"></time></div>`;
